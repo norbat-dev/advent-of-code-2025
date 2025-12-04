@@ -72,6 +72,42 @@ class Batteries
         return $this->joltage;
     }
 
+    public function reset_calulations()
+    {
+        $this->largest_joltage_per_bank = [];
+        $this->joltage = 0;
+    }
+
+    public function calculate_largest_joltage_part_2()
+    {
+        $how_many_bateries_to_select = 12;
+
+        foreach( $this->battery_banks as $battery_bank )
+        {
+            $battery_bank = str_split( trim( $battery_bank ) );
+
+            $selected_bateries = [];
+            $starting_index = 0;
+            $temp_max = 0;
+
+            while( count( $selected_bateries ) < $how_many_bateries_to_select )
+            {
+                $how_many_we_got = count( $selected_bateries );
+                for( $i = $starting_index; $i <= ( count( $battery_bank ) - ( $how_many_bateries_to_select - $how_many_we_got ) ); $i++ )
+                {
+                    if( $battery_bank[ $i ] > $temp_max ){
+                        $temp_max = $battery_bank[ $i ];
+                        $starting_index = $i;
+                    }
+                }
+                $selected_bateries[] = $temp_max;
+                $starting_index++;
+                $temp_max = 0;
+            }
+            $this->largest_joltage_per_bank[] = (int) implode( '', $selected_bateries );
+        }
+    }
+
 }
 
 
@@ -81,5 +117,10 @@ $batteries->load_input( 'input.txt' )->read_battery_banks();
 $batteries->calculate_largest_joltage();
 $batteries->sum_bank_joltage();
 echo '[Part 1] Total joltage output: ' . $batteries->get_total_joltage() .  PHP_EOL;
+$batteries->reset_calulations();
+$batteries->calculate_largest_joltage_part_2();
+$batteries->sum_bank_joltage();
+echo '[Part 2] Total joltage output: ' . $batteries->get_total_joltage() .  PHP_EOL;
+
 
 ?>
